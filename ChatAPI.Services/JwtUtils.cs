@@ -9,6 +9,7 @@ using System.Text;
 using ChatAPI.Domain.Interfaces.Services;
 using ChatAPI.Domain.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace ChatAPI.Services
 {
@@ -16,21 +17,21 @@ namespace ChatAPI.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtSettings _jwtSettings;
-        private readonly JwtKey _jwtKey;
+        private readonly string _jwtKey;
 
         public JwtUtils(IUnitOfWork unitOfWork,
             IOptions<JwtSettings> jwtSettings,
-            IOptions<JwtKey> jwtKey)
+            IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _jwtSettings = jwtSettings.Value;
-            _jwtKey = jwtKey.Value;
+            _jwtKey = configuration.GetSection(ChatConstants.JwtKey).Value;
         }
 
         public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_jwtKey.Value);
+            var key = Encoding.UTF8.GetBytes(_jwtKey);
 
             var claims = new List<Claim>
             {

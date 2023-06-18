@@ -14,10 +14,10 @@ namespace ChatAPI.Api.Extensions
     public static class ServiceExtensions
 	{
 		public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services,
-            ConfigurationManager configuration)
+            IConfiguration configuration)
 		{
             var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
-            var jwtKey = configuration.GetSection(nameof(JwtKey)).Get<JwtKey>();
+            var jwtKey = configuration.GetSection(nameof(ChatConstants.JwtKey)).Value;
 
             var tokenValidationParameters = new TokenValidationParameters
             {
@@ -27,7 +27,7 @@ namespace ChatAPI.Api.Extensions
                 ValidAudience = jwtSettings.Audience,
                 //Ważne: sprawdzanie zgodnie z zapamiętanym kluczem
                 IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey.Value)),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = true,
@@ -80,10 +80,9 @@ namespace ChatAPI.Api.Extensions
         }
 
         public static void AddSettings(this IServiceCollection services,
-            ConfigurationManager configuration)
+            IConfiguration configuration)
         {
             services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
-            services.Configure<JwtKey>(configuration.GetSection(nameof(JwtKey)));
         }
     }
 }

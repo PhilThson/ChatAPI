@@ -71,7 +71,6 @@ namespace ChatAPI.Services
 
             _unitOfWork.Save();
 
-
             return new AuthenticateResponseDto
             {
                 JwtToken = newJwtToken,

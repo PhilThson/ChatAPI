@@ -14,8 +14,11 @@ namespace ChatAPI.Api.Extensions
     public static class ServiceExtensions
 	{
 		public static AuthenticationBuilder AddTokenAuthentication(this IServiceCollection services,
-            JwtSettings jwtSettings)
+            ConfigurationManager configuration)
 		{
+            var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+            var jwtKey = configuration.GetSection(nameof(JwtKey)).Get<JwtKey>();
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 //określenie jak będzie przebiegało uwierzytelnianie
@@ -24,7 +27,7 @@ namespace ChatAPI.Api.Extensions
                 ValidAudience = jwtSettings.Audience,
                 //Ważne: sprawdzanie zgodnie z zapamiętanym kluczem
                 IssuerSigningKey =
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey.Value)),
                 ValidateIssuerSigningKey = true,
                 ValidateIssuer = true,
                 ValidateAudience = true,
@@ -41,36 +44,6 @@ namespace ChatAPI.Api.Extensions
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
                 {
                     o.TokenValidationParameters = tokenValidationParameters;
-
-                    //o.Events = new JwtBearerEvents()
-                    //{
-                    //    OnMessageReceived = (context) =>
-                    //    {
-                    //        var path = context.HttpContext.Request.Path;
-                    //        if (path.StartsWithSegments("/token"))
-                    //        {
-                    //normalnie wartość tokenu przychodzi w nagłówku Authorization
-                    //ale na potrzeby SignalR może bedzie w Query
-                    //            var accessToken = context.Request.Query["access_token"];
-
-                    //            if (!string.IsNullOrWhiteSpace(accessToken))
-                    //            {
-                    //                //context.Token = accessToken;
-
-                    //                var claims = new Claim[]
-                    //                {
-                    //                    new("user_id", accessToken),
-                    //                    new("token", "token_claim"),
-                    //                };
-                    //                var identity = new ClaimsIdentity(claims, "CustomTokenScheme");
-                    //                context.Principal = new ClaimsPrincipal(identity);
-                    //                context.Success();
-                    //            }
-                    //        }
-
-                    //        return Task.CompletedTask;
-                    //    },
-                    //};
                 });
         }
 
@@ -99,11 +72,18 @@ namespace ChatAPI.Api.Extensions
             });
         }
 
-        public static void RegisterServices(this IServiceCollection services)
+        public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
+        }
+
+        public static void AddSettings(this IServiceCollection services,
+            ConfigurationManager configuration)
+        {
+            services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+            services.Configure<JwtKey>(configuration.GetSection(nameof(JwtKey)));
         }
     }
 }

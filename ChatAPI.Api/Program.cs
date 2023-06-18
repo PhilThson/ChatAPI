@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 using ChatAPI.Api.Extensions;
 using ChatAPI.Domain.Helpers;
-using ChatAPI.Domain.Settings;
 using ChatAPI.Infrastructure.DataAccess;
 using ChatAPI.Infrastructure.Hubs;
 using Microsoft.EntityFrameworkCore;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,16 +17,14 @@ builder.Services.AddDbContext<ChatDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Chat"));
 });
 
-builder.Services.Configure<JwtSettings>(
-    builder.Configuration.GetSection(nameof(JwtSettings)));
+var configuration = builder.Configuration;
 
-var jwtSettings = builder.Configuration
-    .GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+builder.Services.AddSettings(configuration);
 
-builder.Services.AddTokenAuthentication(jwtSettings);
+builder.Services.AddTokenAuthentication(configuration);
 builder.Services.AddTokenAuthorizationPolicy();
 
-builder.Services.RegisterServices();
+builder.Services.AddServices();
 
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();

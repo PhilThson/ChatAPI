@@ -16,18 +16,21 @@ namespace ChatAPI.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly JwtSettings _jwtSettings;
+        private readonly JwtKey _jwtKey;
 
         public JwtUtils(IUnitOfWork unitOfWork,
-            IOptions<JwtSettings> jwtSettings)
+            IOptions<JwtSettings> jwtSettings,
+            IOptions<JwtKey> jwtKey)
         {
             _unitOfWork = unitOfWork;
             _jwtSettings = jwtSettings.Value;
+            _jwtKey = jwtKey.Value;
         }
 
         public string GenerateToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_jwtSettings.Key);
+            var key = Encoding.UTF8.GetBytes(_jwtKey.Value);
 
             var claims = new List<Claim>
             {

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using ChatAPI.Api.Extensions;
 using ChatAPI.Domain.Helpers;
@@ -21,10 +22,12 @@ var configuration = builder.Configuration;
 
 builder.Services.AddSettings(configuration);
 
+builder.Services.EnableCors();
 builder.Services.AddTokenAuthentication(configuration);
 builder.Services.AddTokenAuthorizationPolicy();
 
 builder.Services.AddServices();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
@@ -38,7 +41,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
 app.UseExceptionMiddleware();
+
+app.UseCors(ChatConstants.CorsPolicy);
 
 app.UseAuthentication();
 

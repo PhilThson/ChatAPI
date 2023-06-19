@@ -1,15 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChatAPI.Domain.DTOs;
+using ChatAPI.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAPI.Api.Controllers
 {
     [Route("api/[controller]")]
     public class RoomController : ControllerBase
     {
+        private readonly IRoomService _roomService;
+
+        public RoomController(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         // GET: api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var rooms = await _roomService.GetAll<ReadRoomDto>();
+            return Ok(rooms);
         }
 
         // GET api/values/5

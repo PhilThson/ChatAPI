@@ -17,6 +17,7 @@ namespace ChatAPI.Api.Extensions
             IConfiguration configuration)
 		{
             var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+            //przechowywane w secrets.json
             var jwtKey = configuration.GetSection(nameof(ChatConstants.JwtKey)).Value;
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -59,16 +60,18 @@ namespace ChatAPI.Api.Extensions
             });
         }
 
-        public static IServiceCollection AddCors(this IServiceCollection services)
+        public static IServiceCollection EnableCors(this IServiceCollection services)
         {
             return services.AddCors(options =>
             {
-                options.AddDefaultPolicy(builder => builder
-                    .SetIsOriginAllowed(origin => true)
-                    //.WithOrigins("http://localhost:5000")
+                options.AddPolicy(ChatConstants.CorsPolicy, builder => builder
+                    .SetIsOriginAllowed(isOriginAllowed: _ => true)
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials());
+                    .WithOrigins("http://localhost:3000")
+                    .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                    .AllowCredentials()
+                    .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
+                    );
             });
         }
 
@@ -77,6 +80,7 @@ namespace ChatAPI.Api.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoomService, RoomService>();
         }
 
         public static void AddSettings(this IServiceCollection services,

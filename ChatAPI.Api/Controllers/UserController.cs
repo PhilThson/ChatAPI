@@ -27,7 +27,7 @@ namespace ChatAPI.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("authenticate")]
+        [HttpPost("authenticate"), HttpOptions]
         public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequestDto model)
         {
             var response = await _userService.Authenticate(model);

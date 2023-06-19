@@ -15,17 +15,21 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="CustomMiddleware\" />
     <None Remove="Extensions\" />
     <None Remove="Filters\" />
+    <None Remove="MappingProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CustomMiddleware\" />
     <Folder Include="Extensions\" />
     <Folder Include="Filters\" />
+    <Folder Include="MappingProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ChatAPI.Infrastructure\ChatAPI.Infrastructure.csproj">

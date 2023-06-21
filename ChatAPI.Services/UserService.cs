@@ -50,10 +50,10 @@ namespace ChatAPI.Services
         public async Task<AuthenticateResponseDto> RefreshToken(string refreshToken)
         {
             if (string.IsNullOrEmpty(refreshToken))
-                throw new ValidationException("No refresh token provided");
+                throw new DataValidationException("No refresh token provided");
 
             var user = await _unitOfWork.User.GetFirstAsync(u => u.RefreshToken == refreshToken) ??
-                throw new ValidationException("Invalid token provided");
+                throw new DataValidationException("Invalid token provided");
 
             if (user.RefreshTokenIsRevoked)
                 throw new AuthenticationException("Refresh token is revoked");

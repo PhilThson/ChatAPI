@@ -1,9 +1,13 @@
-﻿using ChatAPI.Domain.DTOs;
+﻿using ChatAPI.Domain.DTOs.Read;
+using ChatAPI.Domain.Helpers;
 using ChatAPI.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAPI.Api.Controllers
 {
+    [ApiController]
+    [Authorize(Policy = ChatConstants.TokenPolicy)]
     [Route("api/[controller]")]
     public class RoomController : ControllerBase
     {

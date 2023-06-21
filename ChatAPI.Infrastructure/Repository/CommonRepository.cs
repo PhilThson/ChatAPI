@@ -9,7 +9,7 @@ namespace ChatAPI.Infrastructure.Repository
         where T : class
 	{
         private readonly ChatDbContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
 
 		public CommonRepository(ChatDbContext dbContext)
 		{

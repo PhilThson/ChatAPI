@@ -19,9 +19,9 @@ namespace ChatAPI.Infrastructure.Repository
         public ICommonRepository<User> User =>
             _user ??= new CommonRepository<User>(_context);
 
-        private ICommonRepository<Message> _message;
-        public ICommonRepository<Message> Message =>
-            _message ??= new CommonRepository<Message>(_context);
+        private IMessageRepository _message;
+        public IMessageRepository Message =>
+            _message ??= new MessageRepository(_context);
 
         private ICommonRepository<Room> _room;
         public ICommonRepository<Room> Room =>

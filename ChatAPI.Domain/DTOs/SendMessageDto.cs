@@ -10,6 +10,9 @@ namespace ChatAPI.Domain.DTOs
 		[Required]
 		[StringLength(2048)]
 		public string? Message { get; set; }
+
+		[Required]
+		public string? Username { get; set; }
 	}
 }
 

@@ -81,6 +81,7 @@ namespace ChatAPI.Api.Extensions
             services.AddScoped<IJwtUtils, JwtUtils>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IMessageService, MessageService>();
         }
 
         public static void AddSettings(this IServiceCollection services,

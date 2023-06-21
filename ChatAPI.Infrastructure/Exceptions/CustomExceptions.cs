@@ -1,13 +1,12 @@
-﻿using System;
-namespace ChatAPI.Infrastructure.Exceptions
+﻿namespace ChatAPI.Infrastructure.Exceptions
 {
-	public class ValidationException : Exception
+    public class DataValidationException : Exception
 	{
-		public ValidationException(string message) : base(message)
+		public DataValidationException(string message) : base(message)
 		{
 		}
 
-		public ValidationException() : base("Invalid input data")
+		public DataValidationException() : base("Invalid input data")
 		{
 		}
 	}

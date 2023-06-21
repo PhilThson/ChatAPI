@@ -20,10 +20,10 @@ namespace ChatAPI.Api.Controllers
 
         [Authorize(Policy = ChatConstants.TokenPolicy)]
         [HttpGet]
-        public KeyValuePair<string, string> Get()
+        public KeyValuePair<string, int> Get()
         {
             var userId = HttpContext.GetUserId();
-            return new KeyValuePair<string, string>("UserId", userId);
+            return new KeyValuePair<string, int>("UserId", userId);
         }
 
         [AllowAnonymous]

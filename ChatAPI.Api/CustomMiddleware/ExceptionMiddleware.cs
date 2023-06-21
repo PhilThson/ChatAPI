@@ -26,7 +26,7 @@ namespace ChatAPI.Api.CustomMiddleware
 			{
 				int statusCode = e switch
 				{
-                    ValidationException => StatusCodes.Status400BadRequest,
+                    DataValidationException => StatusCodes.Status400BadRequest,
                     AuthenticationException => StatusCodes.Status401Unauthorized,
                     NotFoundException => StatusCodes.Status404NotFound,
                     _ => StatusCodes.Status500InternalServerError

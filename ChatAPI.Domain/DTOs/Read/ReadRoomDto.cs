@@ -1,4 +1,4 @@
-﻿namespace ChatAPI.Domain.DTOs
+﻿namespace ChatAPI.Domain.DTOs.Read
 {
     public class ReadRoomDto
 	{

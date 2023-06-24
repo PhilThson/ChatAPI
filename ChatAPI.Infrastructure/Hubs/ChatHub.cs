@@ -1,18 +1,19 @@
 ﻿using ChatAPI.Domain.DTOs;
+using ChatAPI.Domain.Helpers;
 using ChatAPI.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChatAPI.Infrastructure.Hubs
 {
-    [Authorize(AuthenticationSchemes = "CustomTokenScheme")]
+    [Authorize(Policy = ChatConstants.TokenPolicy)]
     public class ChatHub : Hub, IChatHub
 	{
 		public ChatHub()
 		{
 		}
 
-		public async Task SendMessage(SendMessageDto message)
+		public async Task SendMessage(MessageDto message)
 		{
             await Clients.All.SendAsync("ReceiveMessage", message);
         }
@@ -26,6 +27,30 @@ namespace ChatAPI.Infrastructure.Hubs
             };
 
             return "authorized resource";
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync("SystemMessage", new MessageDto
+            {
+                RoomId = 1,
+                Message = $"{Context.UserIdentifier} joined.",
+                Username = "System"
+            });
+
+            await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await Clients.All.SendAsync("SystemMessage", new MessageDto
+            {
+                RoomId = 1,
+                Message = $"{Context.UserIdentifier} has left.",
+                Username = "System"
+            });
+
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }

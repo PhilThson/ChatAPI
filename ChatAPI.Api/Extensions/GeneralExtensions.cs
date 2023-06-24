@@ -28,6 +28,12 @@ namespace ChatAPI.Api.Extensions
 			user?.FindFirst(c => c.Type == JwtRegisteredClaimNames.Sub)
 				?.Value ??
 				throw new UnknownUserException();
+
+		public static string GetToken(this HttpContext httpContext) =>
+            httpContext.Request.Headers["Authorization"]
+				.FirstOrDefault()
+				?.Split(" ")
+				.Last();
     }
 }
 

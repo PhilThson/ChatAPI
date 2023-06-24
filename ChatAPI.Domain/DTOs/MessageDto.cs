@@ -2,7 +2,7 @@
 
 namespace ChatAPI.Domain.DTOs
 {
-    public class SendMessageDto
+    public class MessageDto
 	{
 		[Required]
 		public int? RoomId { get; set; }

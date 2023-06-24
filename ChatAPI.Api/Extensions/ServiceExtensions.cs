@@ -45,6 +45,25 @@ namespace ChatAPI.Api.Extensions
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
                 {
                     o.TokenValidationParameters = tokenValidationParameters;
+                    o.Events = new()
+                    {
+                        OnMessageReceived = (context) =>
+                        {
+                            var path = context.HttpContext.Request.Path;
+                            if (path.StartsWithSegments("/chathub"))
+                            {
+                                //var accessToken = context.Request.Query["access_token"];
+                                var accessToken = context.HttpContext.GetToken();
+
+                                if (!string.IsNullOrWhiteSpace(accessToken))
+                                {
+                                    context.Token = accessToken;
+                                }
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                    };
                 });
         }
 
@@ -67,7 +86,7 @@ namespace ChatAPI.Api.Extensions
                 options.AddPolicy(ChatConstants.CorsPolicy, builder => builder
                     .SetIsOriginAllowed(isOriginAllowed: _ => true)
                     .AllowAnyHeader()
-                    .WithOrigins("http://localhost:3000")
+                    .WithOrigins("http://localhost:3000", "https://localhost:7129")
                     .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
                     .AllowCredentials()
                     .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))

@@ -9,17 +9,22 @@ namespace ChatAPI.Infrastructure.Repository
         private readonly ChatDbContext _context;
         private bool _disposed;
 
+        private ICommonRepository<Participant> _participant;
+        private IMessageRepository _message;
+        private ICommonRepository<Room> _room;
+
         public UnitOfWork(ChatDbContext context)
         {
             _context = context;
             _disposed = false;
         }
 
-        private IMessageRepository _message;
+        public ICommonRepository<Participant> Participant =>
+            _participant ??= new CommonRepository<Participant>(_context);
+
         public IMessageRepository Message =>
             _message ??= new MessageRepository(_context);
 
-        private ICommonRepository<Room> _room;
         public ICommonRepository<Room> Room =>
             _room ??= new CommonRepository<Room>(_context);
 

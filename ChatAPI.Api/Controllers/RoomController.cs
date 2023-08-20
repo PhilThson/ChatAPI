@@ -18,7 +18,6 @@ namespace ChatAPI.Api.Controllers
             _roomService = roomService;
         }
 
-        // GET: api/values
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -26,7 +25,6 @@ namespace ChatAPI.Api.Controllers
             return Ok(rooms);
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
         public string Get(int id)
         {

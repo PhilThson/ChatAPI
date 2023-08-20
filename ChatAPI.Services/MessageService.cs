@@ -27,24 +27,27 @@ namespace ChatAPI.Services
         }
 
         public async Task<IEnumerable<T>> GetByRoomId<T>(int roomId) =>
-            _mapper.Map<IEnumerable<T>>(
-                await _unitOfWork.Message.GetByRoomId(roomId));
+            _mapper.Map<IEnumerable<T>>(await _unitOfWork.Message.GetByRoomId(roomId));
 
         public async Task<T> Create<T>(CreateMessageDto messageDto, int userId)
         {
             _ = messageDto ?? throw new DataValidationException("Message is empty");
             if (!_unitOfWork.Room.Exists(r => r.Id == messageDto.RoomId))
-                throw new DataValidationException("Room does not exists");
+                throw new NotFoundException("Room does not exists");
+
+            var participant = await _unitOfWork.Participant.GetFirstAsync(p =>
+                p.RoomId == messageDto.RoomId && p.UserId == userId);
+
+            if (participant is null)
+                throw new NotFoundException("Participant not exists");
 
             var message = _mapper.Map<Message>(messageDto);
-            //message.UserId = userId;
+            message.SenderId = participant.Id;
+
             _unitOfWork.Message.Add(message);
             _unitOfWork.Save();
 
-            var created = await _unitOfWork.Message.GetById(message.Id) ??
-                throw new NotFoundException($"Message not found ({message.Id})");
-
-            return _mapper.Map<T>(created);
+            return _mapper.Map<T>(message);
         }
     }
 }

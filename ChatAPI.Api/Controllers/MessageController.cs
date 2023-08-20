@@ -38,7 +38,8 @@ namespace ChatAPI.Api.Controllers
             var createdMessage =
                 await _messageService.Create<ReadMessageDto>(messageDto, HttpContext.GetUserId());
 
-            return CreatedAtAction(nameof(GetById), new { id = createdMessage.Id }, createdMessage);
+            return CreatedAtAction(
+                nameof(GetById), new { id = createdMessage.Id }, createdMessage);
         }
     }
 }

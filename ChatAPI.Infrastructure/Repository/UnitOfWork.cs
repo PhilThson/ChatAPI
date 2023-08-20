@@ -15,10 +15,6 @@ namespace ChatAPI.Infrastructure.Repository
             _disposed = false;
         }
 
-        private ICommonRepository<User> _user;
-        public ICommonRepository<User> User =>
-            _user ??= new CommonRepository<User>(_context);
-
         private IMessageRepository _message;
         public IMessageRepository Message =>
             _message ??= new MessageRepository(_context);

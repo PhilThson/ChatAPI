@@ -37,7 +37,7 @@ namespace ChatAPI.Services
                 throw new DataValidationException("Room does not exists");
 
             var message = _mapper.Map<Message>(messageDto);
-            message.UserId = userId;
+            //message.UserId = userId;
             _unitOfWork.Message.Add(message);
             _unitOfWork.Save();
 

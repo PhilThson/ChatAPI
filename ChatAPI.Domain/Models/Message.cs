@@ -13,17 +13,20 @@ namespace ChatAPI.Domain.Models
 		[StringLength(2048)]
 		public string? Content { get; set; }
 
+		[Required]
+		public DateTime? SendTime { get; set; }
+
+		public int SenderId { get; set; }
+
 		public int RoomId { get; set; }
 
-		public int UserId { get; set; }
-
 		[JsonIgnore]
-		[ForeignKey(nameof(UserId))]
-		public virtual User? User { get; set; }
+		[ForeignKey(nameof(SenderId))]
+		public virtual Participant Sender { get; set; }
 
 		[JsonIgnore]
 		[ForeignKey(nameof(RoomId))]
-		public virtual Room? Room { get; set; }
+		public virtual Room Room { get; set; }
 	}
 }
 

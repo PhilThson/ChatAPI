@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o
-        .JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+        .JsonSerializerOptions.DefaultIgnoreCondition =
+            JsonIgnoreCondition.WhenWritingNull);
 
 builder.Services.AddDbContext<ChatDbContext>(options =>
 {
@@ -54,19 +55,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/chathub");
-
-app.MapGet("/", async (context) =>
-{
-    await context.Response.WriteAsync(" - Hello in root - ");
-});
-
-app.MapGet("/token", async ctx =>
-{
-    ctx.Response.StatusCode = 200;
-    await ctx.Response
-        .WriteAsync(ctx.User?.Claims
-            .FirstOrDefault(x => x.Type == ChatConstants.UserIdClaim)
-            ?.Value);
-}).RequireAuthorization(ChatConstants.TokenPolicy);
 
 app.Run();

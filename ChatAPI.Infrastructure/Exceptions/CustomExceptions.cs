@@ -43,5 +43,16 @@
 		{
 		}
 	}
+
+	public class AuthorizationException : Exception
+	{
+		public AuthorizationException(string msg) : base(msg)
+		{
+		}
+
+		public AuthorizationException() : base("Access denied")
+		{
+		}
+	}
 }
 

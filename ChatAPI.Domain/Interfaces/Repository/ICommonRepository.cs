@@ -5,7 +5,7 @@ namespace ChatAPI.Domain.Interfaces.Repository
     public interface ICommonRepository<T> where T : class
 	{
         Task<List<T>> GetAllAsync();
-        Task<List<T>> GetByConditionAsync(Expression<Func<T, bool>> predicate);
+        IQueryable<T> GetByConditionAsync(Expression<Func<T, bool>> predicate);
         Task<T?> GetFirstAsync(Expression<Func<T, bool>> predicate);
         ValueTask<T?> GetByIdAsync(int id);
         public bool Exists(Expression<Func<T, bool>> predicate);

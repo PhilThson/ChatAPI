@@ -1,4 +1,5 @@
-﻿using ChatAPI.Domain.DTOs.Read;
+﻿using ChatAPI.Api.Extensions;
+using ChatAPI.Domain.DTOs.Read;
 using ChatAPI.Domain.Helpers;
 using ChatAPI.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -21,14 +22,15 @@ namespace ChatAPI.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var rooms = await _roomService.GetAll<ReadRoomDto>();
+            var rooms = await _roomService.GetAll<ReadSimpleRoomDto>();
             return Ok(rooms);
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            return "value";
+            var room = await _roomService.GetById<ReadRoomDto>(id, User.GetId());
+            return Ok(room);
         }
 
         // POST api/values

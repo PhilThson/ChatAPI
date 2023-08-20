@@ -36,7 +36,7 @@ namespace ChatAPI.Api.Controllers
         public async Task<IActionResult> Create([FromBody] CreateMessageDto messageDto)
         {
             var createdMessage =
-                await _messageService.Create<ReadMessageDto>(messageDto, HttpContext.GetUserId());
+                await _messageService.Create<ReadMessageDto>(messageDto, User.GetId());
 
             return CreatedAtAction(
                 nameof(GetById), new { id = createdMessage.Id }, createdMessage);

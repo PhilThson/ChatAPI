@@ -1,9 +1,9 @@
 ﻿namespace ChatAPI.Domain.DTOs.Read
 {
-    public class ReadRoomDto
+    public class ReadRoomDto : ReadSimpleRoomDto
 	{
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public IEnumerable<ReadParticipantDto> Participants { get; set; }
+        public IEnumerable<ReadMessageDto> Messages { get; set; }
     }
 }
 

@@ -17,31 +17,31 @@ namespace ChatAPI.Infrastructure.Repository
 			_dbSet = dbContext.Set<T>();
 		}
 
-        public Task<List<T>> GetAllAsync() =>
+        public virtual Task<List<T>> GetAllAsync() =>
             _dbSet.AsNoTracking().ToListAsync();
 
-        public Task<List<T>> GetByConditionAsync(Expression<Func<T, bool>> predicate) =>
-            _dbSet.AsNoTracking().Where(predicate).ToListAsync();
+        public virtual IQueryable<T> GetByConditionAsync(Expression<Func<T, bool>> predicate) =>
+            _dbSet.AsNoTracking().Where(predicate);
 
-        public Task<T?> GetFirstAsync(Expression<Func<T, bool>> predicate) =>
+        public virtual Task<T?> GetFirstAsync(Expression<Func<T, bool>> predicate) =>
             _dbSet.FirstOrDefaultAsync(predicate);
 
-        public ValueTask<T?> GetByIdAsync(int id) =>
+        public virtual ValueTask<T?> GetByIdAsync(int id) =>
             _dbSet.FindAsync(id);
 
         public bool Exists(Expression<Func<T, bool>> predicate) =>
             _dbSet.Any(predicate);
 
-        public void Add(T entity) =>
+        public virtual void Add(T entity) =>
             _dbSet.Add(entity);
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             _dbSet.Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public void Delete(T entity) =>
+        public virtual void Delete(T entity) =>
             _dbSet.Remove(entity);
     }
 }

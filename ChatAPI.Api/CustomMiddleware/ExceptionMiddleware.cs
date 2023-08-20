@@ -28,6 +28,7 @@ namespace ChatAPI.Api.CustomMiddleware
 				{
                     DataValidationException => StatusCodes.Status400BadRequest,
                     AuthenticationException => StatusCodes.Status401Unauthorized,
+                    AuthorizationException => StatusCodes.Status403Forbidden,
                     NotFoundException => StatusCodes.Status404NotFound,
                     _ => StatusCodes.Status500InternalServerError
                 };

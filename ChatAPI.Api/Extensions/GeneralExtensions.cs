@@ -7,12 +7,10 @@ namespace ChatAPI.Api.Extensions
 {
     public static class GeneralExtensions
 	{
-		public static int GetUserId(this HttpContext httpContext)
+		public static int GetId(this ClaimsPrincipal user)
 		{
-			var userIdString = httpContext.User
-				?.Claims
-				?.FirstOrDefault(c => c.Type == ChatConstants.UserIdClaim)
-				?.Value ??
+			var userIdString = user?.FindFirst(c => c.Type == ChatConstants.UserIdClaim)?
+				.Value ??
 				throw new UnknownUserException();
 
 			if (!int.TryParse(userIdString, out int userId))
@@ -21,7 +19,7 @@ namespace ChatAPI.Api.Extensions
 			return userId;
         }
 
-		public static string GetUserName(this ClaimsPrincipal user) =>
+		public static string GetName(this ClaimsPrincipal user) =>
             //można w ten sposób, albo z Claimsów dołączonych na etapie tworzenia tokenu
             //context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 			//tutaj inna koncepcja metody rozszerzającej

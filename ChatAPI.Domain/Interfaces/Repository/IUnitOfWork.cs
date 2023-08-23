@@ -6,8 +6,9 @@ namespace ChatAPI.Domain.Interfaces.Repository
     {
         ICommonRepository<Participant> Participant { get; }
         IMessageRepository Message { get; }
-        ICommonRepository<Room> Room { get; }
+        IRoomRepository Room { get; }
 
         void Save();
+        Task SaveAsync();
     }
 }

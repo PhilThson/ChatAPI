@@ -4,7 +4,7 @@ namespace ChatAPI.Domain.Interfaces.Repository
 {
     public interface IRoomRepository : ICommonRepository<Room>
 	{
-		new Task<Room?> GetByIdAsync(int id);
+		Task<Room?> GetByIdAsync(int id, bool isTracked = false);
 	}
 }
 

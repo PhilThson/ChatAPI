@@ -1,5 +1,6 @@
 ﻿using ChatAPI.Api.Extensions;
 using ChatAPI.Domain.DTOs.Read;
+using ChatAPI.Domain.DTOs.Update;
 using ChatAPI.Domain.Helpers;
 using ChatAPI.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -33,22 +34,25 @@ namespace ChatAPI.Api.Controllers
             return Ok(room);
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Create([FromBody] string name)
         {
+            var room = await _roomService.Create<ReadRoomDto>(name, User.GetId());
+            return CreatedAtAction(nameof(GetById), new { id = room.Id }, room);
         }
 
-        // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<IActionResult> Update([FromBody] DictionaryDto<int> update)
         {
+            var updated = await _roomService.UpdateName<ReadRoomDto>(update, User.GetId());
+            return Ok(updated);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+
         }
     }
 }

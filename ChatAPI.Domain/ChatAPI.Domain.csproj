@@ -15,6 +15,7 @@
     <None Remove="Interfaces\Repository\" />
     <None Remove="DTOs\Read\" />
     <None Remove="DTOs\Create\" />
+    <None Remove="DTOs\Update\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -25,5 +26,6 @@
     <Folder Include="Interfaces\Repository\" />
     <Folder Include="DTOs\Read\" />
     <Folder Include="DTOs\Create\" />
+    <Folder Include="DTOs\Update\" />
   </ItemGroup>
 </Project>

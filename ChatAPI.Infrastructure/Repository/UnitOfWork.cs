@@ -11,7 +11,7 @@ namespace ChatAPI.Infrastructure.Repository
 
         private ICommonRepository<Participant> _participant;
         private IMessageRepository _message;
-        private ICommonRepository<Room> _room;
+        private IRoomRepository _room;
 
         public UnitOfWork(ChatDbContext context)
         {
@@ -25,13 +25,14 @@ namespace ChatAPI.Infrastructure.Repository
         public IMessageRepository Message =>
             _message ??= new MessageRepository(_context);
 
-        public ICommonRepository<Room> Room =>
-            _room ??= new CommonRepository<Room>(_context);
+        public IRoomRepository Room =>
+            _room ??= new RoomRepository(_context);
 
-        public void Save()
-        {
+        public void Save() =>
             _context.SaveChanges();
-        }
+
+        public Task SaveAsync() =>
+            _context.SaveChangesAsync();
 
         public void Dispose()
         {

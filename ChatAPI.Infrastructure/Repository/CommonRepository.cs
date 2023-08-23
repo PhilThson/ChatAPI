@@ -20,13 +20,20 @@ namespace ChatAPI.Infrastructure.Repository
         public virtual Task<List<T>> GetAllAsync() =>
             _dbSet.AsNoTracking().ToListAsync();
 
-        public virtual IQueryable<T> GetByConditionAsync(Expression<Func<T, bool>> predicate) =>
-            _dbSet.AsNoTracking().Where(predicate);
+        public virtual IQueryable<T> GetByConditionAsync(
+            Expression<Func<T, bool>> predicate, bool isTracked = false)
+        {
+            IQueryable<T> query = _dbSet;
+            if (isTracked)
+                query = query.AsNoTracking();
+
+            return query.Where(predicate);
+        }
 
         public virtual Task<T?> GetFirstAsync(Expression<Func<T, bool>> predicate) =>
             _dbSet.FirstOrDefaultAsync(predicate);
 
-        public virtual ValueTask<T?> GetByIdAsync(int id) =>
+        public virtual ValueTask<T?> FindByIdAsync(int id) =>
             _dbSet.FindAsync(id);
 
         public bool Exists(Expression<Func<T, bool>> predicate) =>
@@ -34,6 +41,9 @@ namespace ChatAPI.Infrastructure.Repository
 
         public virtual void Add(T entity) =>
             _dbSet.Add(entity);
+
+        public virtual async Task AddAsync(T entity) =>
+            await _dbSet.AddAsync(entity);
 
         public virtual void Update(T entity)
         {

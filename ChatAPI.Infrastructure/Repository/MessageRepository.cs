@@ -14,14 +14,14 @@ namespace ChatAPI.Infrastructure.Repository
         public Task<Message?> GetById(long id) =>
 			_dbSet
 				.AsNoTracking()
-				//.Include(m => m.User)
+				.Include(m => m.Sender)
 				.FirstOrDefaultAsync(m => m.Id == id);
 
         public Task<List<Message>> GetByRoomId(int roomId) =>
 			_dbSet
 				.AsNoTracking()
 				.Where(m => m.Sender.RoomId == roomId)
-				//.Include(m => m.User)
+				.Include(m => m.Sender)
 				.ToListAsync();
 	}
 }

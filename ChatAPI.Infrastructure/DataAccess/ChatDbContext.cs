@@ -23,16 +23,6 @@ namespace ChatAPI.Infrastructure.DataAccess
                     .Property(e => e.SendTime)
                     .HasDefaultValueSql("getdate()")
                     .ValueGeneratedOnAdd();
-
-                builder
-                    .HasOne(e => e.Sender)
-                    .WithMany(e => e.Messages)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                builder
-                    .HasOne(e => e.Room)
-                    .WithMany(e => e.Messages)
-                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<Room>(builder =>
@@ -40,7 +30,12 @@ namespace ChatAPI.Infrastructure.DataAccess
                 builder
                     .HasMany(e => e.Participants)
                     .WithOne(e => e.Room)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                builder
+                    .HasMany(e => e.Messages)
+                    .WithOne(e => e.Room)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 builder
                     .HasIndex(e => e.Name)
@@ -52,6 +47,11 @@ namespace ChatAPI.Infrastructure.DataAccess
                 builder
                     .HasIndex(e => new { e.UserId, e.RoomId })
                     .IsUnique();
+
+                builder
+                    .HasMany(p => p.Messages)
+                    .WithOne(p => p.Sender)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

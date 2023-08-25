@@ -11,9 +11,13 @@ namespace ChatAPI.Infrastructure.Repository
         {
         }
 
-        public Task<Room?> GetByIdAsync(int id, bool isTracked = false) =>
+        public Task<Room?> GetByIdWithMessagesAsync(int id, bool isTracked = false) =>
             GetByConditionAsync(r => r.Id == id, isTracked)
             .Include(r => r.Messages)
+            .FirstOrDefaultAsync();
+
+        public Task<Room?> GetByIdAsync(int id, bool isTracked = false) =>
+            GetByConditionAsync(r => r.Id == id, isTracked)
             .FirstOrDefaultAsync();
     }
 }

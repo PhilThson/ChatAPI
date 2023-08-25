@@ -23,12 +23,12 @@ namespace ChatAPI.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var rooms = await _roomService.GetAll<ReadSimpleRoomDto>();
+            var rooms = await _roomService.GetAll<ReadSimpleRoomDto>(User.GetName());
             return Ok(rooms);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var room = await _roomService.GetById<ReadRoomDto>(id, User.GetId());
             return Ok(room);
@@ -48,11 +48,18 @@ namespace ChatAPI.Api.Controllers
             return Ok(updated);
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            await _roomService.Delete(id, User.GetId());
+            return NoContent();
+        }
 
+        [HttpPut("join/{id}")]
+        public async Task<IActionResult> Join([FromRoute] int id)
+        {
+            await _roomService.Join(id, User.GetId());
+            return NoContent();
         }
     }
 }

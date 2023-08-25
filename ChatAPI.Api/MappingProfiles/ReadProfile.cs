@@ -12,6 +12,8 @@ namespace ChatAPI.Api.MappingProfiles
 
 			CreateMap<Message, ReadMessageDto>()
 				.ForMember(d => d.UserId, o => o.MapFrom(s => s.Sender.UserId));
+
+			CreateMap<Participant, ReadParticipantDto>();
 		}
 	}
 }

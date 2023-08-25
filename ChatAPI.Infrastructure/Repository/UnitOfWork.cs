@@ -1,5 +1,4 @@
 ﻿using ChatAPI.Domain.Interfaces.Repository;
-using ChatAPI.Domain.Models;
 using ChatAPI.Infrastructure.DataAccess;
 
 namespace ChatAPI.Infrastructure.Repository
@@ -9,7 +8,7 @@ namespace ChatAPI.Infrastructure.Repository
         private readonly ChatDbContext _context;
         private bool _disposed;
 
-        private ICommonRepository<Participant> _participant;
+        private IParticipantRepository _participant;
         private IMessageRepository _message;
         private IRoomRepository _room;
 
@@ -19,8 +18,8 @@ namespace ChatAPI.Infrastructure.Repository
             _disposed = false;
         }
 
-        public ICommonRepository<Participant> Participant =>
-            _participant ??= new CommonRepository<Participant>(_context);
+        public IParticipantRepository Participant =>
+            _participant ??= new ParticipantRepository(_context);
 
         public IMessageRepository Message =>
             _message ??= new MessageRepository(_context);
@@ -51,7 +50,6 @@ namespace ChatAPI.Infrastructure.Repository
                 _disposed = true;
             }
         }
-
     }
 }
 

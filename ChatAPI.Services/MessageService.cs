@@ -36,12 +36,10 @@ namespace ChatAPI.Services
                 throw new NotFoundException("Room does not exist");
 
             var participant = await _unitOfWork.Participant.GetFirstAsync(p =>
-                p.RoomId == messageDto.RoomId
-                && p.UserId == userId
-                && p.IsActive);
-
-            if (participant is null)
-                throw new NotFoundException("Participant not exist");
+                    p.RoomId == messageDto.RoomId
+                    && p.UserId == userId
+                    && p.IsActive) ??
+                throw new NotFoundException($"User is not in room ({messageDto.RoomId})");
 
             var message = _mapper.Map<Message>(messageDto);
             message.SenderId = participant.Id;

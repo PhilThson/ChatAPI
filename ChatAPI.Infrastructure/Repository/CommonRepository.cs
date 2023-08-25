@@ -24,7 +24,7 @@ namespace ChatAPI.Infrastructure.Repository
             Expression<Func<T, bool>> predicate, bool isTracked = false)
         {
             IQueryable<T> query = _dbSet;
-            if (isTracked)
+            if (!isTracked)
                 query = query.AsNoTracking();
 
             return query.Where(predicate);

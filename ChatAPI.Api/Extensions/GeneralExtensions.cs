@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using ChatAPI.Domain.Helpers;
 using ChatAPI.Infrastructure.Exceptions;
 
@@ -23,7 +22,9 @@ namespace ChatAPI.Api.Extensions
             //można w ten sposób, albo z Claimsów dołączonych na etapie tworzenia tokenu
             //context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
 			//tutaj inna koncepcja metody rozszerzającej
-			user?.FindFirst(c => c.Type == JwtRegisteredClaimNames.Sub)
+			//Dlaczego claim dodany jako JwtRegisteredClaimName.Sub
+			//wpisał się jako nameidentifier? Nie wiem.
+			user?.FindFirst(c => c.Type == ClaimTypes.NameIdentifier)
 				?.Value ??
 				throw new UnknownUserException();
 

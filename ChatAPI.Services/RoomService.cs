@@ -104,10 +104,7 @@ public class RoomService : IRoomService
         if (!_unitOfWork.Room.Exists(r => r.Id == roomId))
             throw new NotFoundException($"Room does not exists ({roomId})");
 
-        var roomParticipant =
-            await _unitOfWork.Participant.GetFirstAsync(p =>
-                p.RoomId == roomId && p.UserId == userId);
-
+        var roomParticipant = await GetRoomParticipant(roomId, userId);
         if (roomParticipant is null)
         {
             _unitOfWork.Participant.Add(new Participant
@@ -122,5 +119,27 @@ public class RoomService : IRoomService
 
         await _unitOfWork.SaveAsync();
     }
+
+    public async Task Leave(int roomId, int userId)
+    {
+        if (!_unitOfWork.Room.Exists(r => r.Id == roomId))
+            throw new NotFoundException($"Room does not exists ({roomId})");
+
+        var roomParticipants =
+            await _unitOfWork.Participant.GetRoomParticipants(roomId, isTracked: true);
+
+        var roomParticipant = roomParticipants.FirstOrDefault(p => p.UserId == userId) ??
+            throw new DataValidationException("User is not in the room");
+
+        if (roomParticipant.IsAdmin && roomParticipants.Count(p => p.IsAdmin) == 1)
+            throw new DataValidationException("Last admin can't leave the room");
+
+        _unitOfWork.Participant.Delete(roomParticipant);
+        await _unitOfWork.SaveAsync();
+    }
+
+    private async Task<Participant?> GetRoomParticipant(int roomId, int userId) =>
+        await _unitOfWork.Participant.GetFirstAsync(p =>
+            p.RoomId == roomId && p.UserId == userId);
 }
 

@@ -10,5 +10,6 @@ namespace ChatAPI.Domain.Interfaces.Services
         Task<T> UpdateName<T>(DictionaryDto<int> update, int userId);
         Task Delete(int roomId, int userId);
         Task Join(int roomId, int userId);
+        Task Leave(int roomId, int userId);
     }
 }

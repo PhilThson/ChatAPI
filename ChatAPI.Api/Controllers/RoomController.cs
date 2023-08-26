@@ -59,6 +59,13 @@ namespace ChatAPI.Api.Controllers
         public async Task<IActionResult> Join([FromRoute] int id)
         {
             await _roomService.Join(id, User.GetId());
+            return RedirectToAction(nameof(GetById), new { id });
+        }
+
+        [HttpPut("leave/{id}")]
+        public async Task<IActionResult> Leave([FromRoute] int id)
+        {
+            await _roomService.Leave(id, User.GetId());
             return NoContent();
         }
     }

@@ -33,8 +33,8 @@ namespace ChatAPI.Infrastructure.Hubs
         {
             await Clients.All.SendAsync("SystemMessage", new MessageDto
             {
-                RoomId = 1,
-                Message = $"{Context.UserIdentifier} joined.",
+                RoomId = 2003,
+                Content = $"{Context.UserIdentifier} joined.",
                 Username = "System"
             });
 
@@ -45,8 +45,8 @@ namespace ChatAPI.Infrastructure.Hubs
         {
             await Clients.All.SendAsync("SystemMessage", new MessageDto
             {
-                RoomId = 1,
-                Message = $"{Context.UserIdentifier} has left.",
+                RoomId = 2003,
+                Content = $"{Context.UserIdentifier} has left.",
                 Username = "System"
             });
 

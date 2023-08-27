@@ -52,8 +52,9 @@ namespace ChatAPI.Api.Extensions
                             var path = context.HttpContext.Request.Path;
                             if (path.StartsWithSegments("/chathub"))
                             {
-                                //var accessToken = context.Request.Query["access_token"];
-                                var accessToken = context.HttpContext.GetToken();
+                                var accessToken = context.Request.Query["access_token"];
+                                if (string.IsNullOrEmpty(accessToken))
+                                    accessToken = context.HttpContext.GetToken();
 
                                 if (!string.IsNullOrWhiteSpace(accessToken))
                                 {

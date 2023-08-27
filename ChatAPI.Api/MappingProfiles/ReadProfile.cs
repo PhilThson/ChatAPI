@@ -10,8 +10,9 @@ namespace ChatAPI.Api.MappingProfiles
 		{
 			CreateMap<Room, ReadRoomDto>();
 
-			CreateMap<Message, ReadMessageDto>()
-				.ForMember(d => d.UserId, o => o.MapFrom(s => s.Sender.UserId));
+			CreateMap<Room, ReadSimpleRoomDto>();
+
+			CreateMap<Message, ReadMessageDto>();
 
 			CreateMap<Participant, ReadParticipantDto>();
 		}

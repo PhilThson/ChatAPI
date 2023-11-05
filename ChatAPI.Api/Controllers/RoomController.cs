@@ -1,40 +1,72 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChatAPI.Api.Extensions;
+using ChatAPI.Domain.DTOs.Read;
+using ChatAPI.Domain.DTOs.Update;
+using ChatAPI.Domain.Helpers;
+using ChatAPI.Domain.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChatAPI.Api.Controllers
 {
+    [ApiController]
+    [Authorize(Policy = ChatConstants.TokenPolicy)]
     [Route("api/[controller]")]
     public class RoomController : ControllerBase
     {
-        // GET: api/values
+        private readonly IRoomService _roomService;
+
+        public RoomController(IRoomService roomService)
+        {
+            _roomService = roomService;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> Get()
         {
-            return new string[] { "value1", "value2" };
+            var rooms = await _roomService.GetAll<ReadSimpleRoomDto>(User.GetName());
+            return Ok(rooms);
         }
 
-        // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            return "value";
+            var room = await _roomService.GetById<ReadRoomDto>(id, User.GetId());
+            return Ok(room);
         }
 
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<IActionResult> Create([FromBody] string name)
         {
+            var room = await _roomService.Create<ReadRoomDto>(name, User.GetId());
+            return CreatedAtAction(nameof(GetById), new { id = room.Id }, room);
         }
 
-        // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public async Task<IActionResult> Update([FromBody] DictionaryDto<int> update)
         {
+            var updated = await _roomService.UpdateName<ReadRoomDto>(update, User.GetId());
+            return Ok(updated);
         }
 
-        // DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            await _roomService.Delete(id, User.GetId());
+            return NoContent();
+        }
+
+        [HttpPut("join/{id}")]
+        public async Task<IActionResult> Join([FromRoute] int id)
+        {
+            await _roomService.Join(id, User.GetId());
+            return RedirectToAction(nameof(GetById), new { id });
+        }
+
+        [HttpPut("leave/{id}")]
+        public async Task<IActionResult> Leave([FromRoute] int id)
+        {
+            await _roomService.Leave(id, User.GetId());
+            return NoContent();
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿using ChatAPI.Domain.Models;
-
-namespace ChatAPI.Domain.Interfaces.Repository
+﻿namespace ChatAPI.Domain.Interfaces.Repository
 {
     public interface IUnitOfWork
     {
-        ICommonRepository<User> User { get; }
-        ICommonRepository<Message> Message { get; }
-        ICommonRepository<Room> Room { get; }
+        IParticipantRepository Participant { get; }
+        IMessageRepository Message { get; }
+        IRoomRepository Room { get; }
 
         void Save();
+        Task SaveAsync();
     }
 }

@@ -8,8 +8,8 @@ namespace ChatAPI.Domain.Models
 	{
 		public Room()
 		{
-			Participants = new HashSet<User>();
 			Messages = new HashSet<Message>();
+			Participants = new HashSet<Participant>();
 		}
 
 		[Key]
@@ -20,10 +20,10 @@ namespace ChatAPI.Domain.Models
 		public string Name { get; set; }
 
 		[JsonIgnore]
-		public virtual ICollection<User> Participants { get; set; }
+		public virtual ICollection<Message> Messages { get; set; }
 
 		[JsonIgnore]
-		public virtual ICollection<Message> Messages { get; set; }
+		public virtual ICollection<Participant> Participants { get; set; }
 	}
 }
 

@@ -11,17 +11,21 @@
     <None Remove="DTOs\" />
     <None Remove="Interfaces\" />
     <None Remove="Interfaces\Services\" />
-    <None Remove="Settings\" />
     <None Remove="Helpers\" />
     <None Remove="Interfaces\Repository\" />
+    <None Remove="DTOs\Read\" />
+    <None Remove="DTOs\Create\" />
+    <None Remove="DTOs\Update\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="DTOs\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Services\" />
-    <Folder Include="Settings\" />
     <Folder Include="Helpers\" />
     <Folder Include="Interfaces\Repository\" />
+    <Folder Include="DTOs\Read\" />
+    <Folder Include="DTOs\Create\" />
+    <Folder Include="DTOs\Update\" />
   </ItemGroup>
 </Project>

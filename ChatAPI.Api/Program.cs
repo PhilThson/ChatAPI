@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using ChatAPI.Api.Extensions;
 using ChatAPI.Domain.Helpers;
@@ -10,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o
-        .JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
+        .JsonSerializerOptions.DefaultIgnoreCondition =
+            JsonIgnoreCondition.WhenWritingNull);
 
 builder.Services.AddDbContext<ChatDbContext>(options =>
 {
@@ -21,14 +23,16 @@ var configuration = builder.Configuration;
 
 builder.Services.AddSettings(configuration);
 
+builder.Services.EnableCors();
 builder.Services.AddTokenAuthentication(configuration);
 builder.Services.AddTokenAuthorizationPolicy();
 
 builder.Services.AddServices();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
 
 var app = builder.Build();
 
@@ -38,7 +42,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
+
 app.UseExceptionMiddleware();
+
+app.UseCors(ChatConstants.CorsPolicy);
 
 app.UseAuthentication();
 
@@ -47,19 +55,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<ChatHub>("/chathub");
-
-app.MapGet("/", async (context) =>
-{
-    await context.Response.WriteAsync(" - Hello in root - ");
-});
-
-app.MapGet("/token", async ctx =>
-{
-    ctx.Response.StatusCode = 200;
-    await ctx.Response
-        .WriteAsync(ctx.User?.Claims
-            .FirstOrDefault(x => x.Type == ChatConstants.UserIdClaim)
-            ?.Value);
-}).RequireAuthorization(ChatConstants.TokenPolicy);
 
 app.Run();

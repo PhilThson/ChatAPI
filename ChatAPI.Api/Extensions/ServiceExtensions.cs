@@ -7,6 +7,7 @@ using ChatAPI.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace ChatAPI.Api.Extensions
@@ -17,6 +18,7 @@ namespace ChatAPI.Api.Extensions
             IConfiguration configuration)
 		{
             var jwtSettings = configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>();
+            //przechowywane w secrets.json
             var jwtKey = configuration.GetSection(nameof(ChatConstants.JwtKey)).Value;
 
             var tokenValidationParameters = new TokenValidationParameters
@@ -44,6 +46,26 @@ namespace ChatAPI.Api.Extensions
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
                 {
                     o.TokenValidationParameters = tokenValidationParameters;
+                    o.Events = new()
+                    {
+                        OnMessageReceived = (context) =>
+                        {
+                            var path = context.HttpContext.Request.Path;
+                            if (path.StartsWithSegments("/chathub"))
+                            {
+                                var accessToken = context.Request.Query["access_token"];
+                                if (string.IsNullOrEmpty(accessToken))
+                                    accessToken = context.HttpContext.GetToken();
+
+                                if (!string.IsNullOrWhiteSpace(accessToken))
+                                {
+                                    context.Token = accessToken;
+                                }
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                    };
                 });
         }
 
@@ -59,30 +81,64 @@ namespace ChatAPI.Api.Extensions
             });
         }
 
-        public static IServiceCollection AddCors(this IServiceCollection services)
+        public static IServiceCollection EnableCors(this IServiceCollection services)
         {
             return services.AddCors(options =>
             {
-                options.AddDefaultPolicy(builder => builder
-                    .SetIsOriginAllowed(origin => true)
-                    //.WithOrigins("http://localhost:5000")
+                options.AddPolicy(ChatConstants.CorsPolicy, builder => builder
+                    .SetIsOriginAllowed(isOriginAllowed: _ => true)
                     .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials());
+                    .WithOrigins("http://localhost:3000", "https://localhost:7129")
+                    .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+                    .AllowCredentials()
+                    .SetPreflightMaxAge(TimeSpan.FromSeconds(3600))
+                    );
             });
         }
 
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IJwtUtils, JwtUtils>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IMessageService, MessageService>();
         }
 
         public static void AddSettings(this IServiceCollection services,
             IConfiguration configuration)
         {
             services.Configure<JwtSettings>(configuration.GetSection(nameof(JwtSettings)));
+        }
+
+        public static void AddSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(opt =>
+            {
+                opt.SwaggerDoc("v1", new OpenApiInfo { Title = "ChatAPI", Version = "v1" });
+                opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter token",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT",
+                    Scheme = "bearer"
+                });
+
+                opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
+            });
         }
     }
 }

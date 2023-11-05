@@ -11,7 +11,7 @@ namespace ChatAPI.Infrastructure.DataAccess
 
 		}
 
-        public DbSet<User> User { get; set; }
+        public DbSet<Participant> Participant { get; set; }
         public DbSet<Message> Message { get; set; }
         public DbSet<Room> Room { get; set; }
 
@@ -20,26 +20,38 @@ namespace ChatAPI.Infrastructure.DataAccess
 			modelBuilder.Entity<Message>(builder =>
 			{
                 builder
-                    .HasOne(e => e.User)
-                    .WithMany(e => e.UserMessages)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-                builder
-                    .HasOne(e => e.User)
-                    .WithMany(e => e.UserMessages)
-                    .OnDelete(DeleteBehavior.NoAction);
-            });
-
-            modelBuilder.Entity<User>(builder =>
-            {
-                builder.HasIndex(i => i.Name).IsUnique();
+                    .Property(e => e.SendTime)
+                    .HasDefaultValueSql("getdate()")
+                    .ValueGeneratedOnAdd();
             });
 
             modelBuilder.Entity<Room>(builder =>
             {
                 builder
                     .HasMany(e => e.Participants)
-                    .WithMany(e => e.UserRooms);
+                    .WithOne(e => e.Room)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                builder
+                    .HasMany(e => e.Messages)
+                    .WithOne(e => e.Room)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                builder
+                    .HasIndex(e => e.Name)
+                    .IsUnique();
+            });
+
+            modelBuilder.Entity<Participant>(builder =>
+            {
+                builder
+                    .HasIndex(e => new { e.UserId, e.RoomId })
+                    .IsUnique();
+
+                builder
+                    .HasMany(p => p.Messages)
+                    .WithOne(p => p.Sender)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }
